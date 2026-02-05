@@ -1,0 +1,8 @@
+# Add to ~/.zshrc for autossh support
+
+# autossh: automatically reconnects on connection failure
+# Install: brew install autossh
+alias ash="autossh -M 0 -o 'ServerAliveInterval 10' -o 'ServerAliveCountMax 3'"
+
+# Usage: ash server-myproject
+# This will ssh to server-myproject and auto-reconnect if the connection drops

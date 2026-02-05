@@ -1,0 +1,12 @@
+{
+  "model": "opus",
+  "env": {
+    "CLAUDE_CODE_ENABLE_STATUSLINE": "true",
+    "CLAUDE_CODE_STATUSLINE_CMD": "~/.claude/statusline.sh"
+  },
+  "permissions": {
+    "allow": [
+      "WebSearch"
+    ]
+  }
+}

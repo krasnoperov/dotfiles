@@ -1,0 +1,47 @@
+# PS1 prompt with zmx session and git status
+# Source this from your .bashrc: source ~/.bashrc.prompt
+
+__zmx_prompt() {
+  if [ -n "$ZMX_SESSION" ]; then
+    printf "\033[35m[%s]\033[0m " "$ZMX_SESSION"
+  fi
+}
+
+__short_path() {
+  local projects="$HOME/projects"
+  if [[ "$PWD" == "$projects"/* ]]; then
+    echo "${PWD#$projects/}"
+  elif [[ "$PWD" == "$projects" ]]; then
+    echo "projects"
+  elif [[ "$PWD" == "$HOME" ]]; then
+    echo "~"
+  elif [[ "$PWD" == "$HOME"/* ]]; then
+    echo "~/${PWD#$HOME/}"
+  else
+    echo "$PWD"
+  fi
+}
+
+__git_prompt() {
+  local branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+  [ -z "$branch" ] && return
+
+  local ahead=$(git rev-list --count @{upstream}..HEAD 2>/dev/null || echo 0)
+  local behind=$(git rev-list --count HEAD..@{upstream} 2>/dev/null || echo 0)
+  local modified=$(git diff --name-only 2>/dev/null | wc -l | tr -d ' ')
+  local untracked=$(git ls-files --others --exclude-standard 2>/dev/null | wc -l | tr -d ' ')
+
+  local sync=""
+  [ "$ahead" != "0" ] && sync="↑${ahead}"
+  [ "$behind" != "0" ] && sync="${sync}↓${behind}"
+
+  local stats=""
+  [ "$modified" != "0" ] && stats=" \033[33m${modified}m\033[0m"
+  [ "$untracked" != "0" ] && stats="${stats} \033[90m${untracked}u\033[0m"
+
+  printf " \033[31m%s\033[0m" "$branch"
+  [ -n "$sync" ] && printf " \033[36m%s\033[0m" "$sync"
+  printf "%b" "$stats"
+}
+
+PS1='$(__zmx_prompt)\[\033[32m\]\u@\h\[\033[0m\]:\[\033[34m\]$(__short_path)\[\033[0m\]$(__git_prompt) \$ '

@@ -1,0 +1,25 @@
+# SSH config for zmx session persistence
+# Add to ~/.ssh/config
+
+# Create sockets directory: mkdir -p ~/.ssh/sockets
+
+# zmx sessions: ssh server-projectname → zmx attach projectname
+# Replace 'server' with your actual hostname
+Host server-*
+    HostName your-server.example.com
+    User your-username
+    IdentityFile ~/.ssh/id_ed25519
+    RequestTTY yes
+    RemoteCommand zmx attach %n
+    ControlMaster auto
+    ControlPath ~/.ssh/sockets/%r@%h-%p
+    ControlPersist 10m
+
+# Direct connection (no zmx)
+Host server
+    HostName your-server.example.com
+    User your-username
+    IdentityFile ~/.ssh/id_ed25519
+    ControlMaster auto
+    ControlPath ~/.ssh/sockets/%r@%h-%p
+    ControlPersist 10m
